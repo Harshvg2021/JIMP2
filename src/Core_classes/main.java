@@ -111,7 +111,6 @@ public class main {
                     if (choice == 1) {
                         System.out.println("Enter the playlist name : ");                        
                         String playlistName = sc.next();
-//                        String playlistID = UUID.randomUUID().toString().replace("-", "");
 
                         // call function to create playlist
                         // return boolean true if created successfully, else return false
