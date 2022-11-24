@@ -11,7 +11,6 @@ public class main {
         Connection conn = new JDBC_connection().connect_to_db("JIMP","postgres","root");
         Scanner sc = new Scanner(System.in);
         String email = "";
-        var ans = 'y';
         boolean login = false;
         boolean isVerifiedArtist = false;
         while (true) {
@@ -66,7 +65,8 @@ public class main {
 //                    String newUserID = UUID.randomUUID().toString().replace("-", "");
 
                     // call a function to create a user in the database, and return true if account created successfully
-                    boolean accCreated = new JDBC_connection().createUser(conn,curemail,newUserUsername,newUserPassword);
+                    user newUser = new user(curemail, newUserUsername, newUserPassword);
+                    boolean accCreated = new JDBC_connection().createUser(conn, newUser);
                     if(!accCreated){
                         System.out.println("Account already exists!..");
                     }
@@ -109,15 +109,14 @@ public class main {
                     choice = sc.nextInt();
 
                     if (choice == 1) {
-                        System.out.println("Enter the playlist name : ");
-                        playlist pl = new playlist();
-                        
+                        System.out.println("Enter the playlist name : ");                        
                         String playlistName = sc.next();
 //                        String playlistID = UUID.randomUUID().toString().replace("-", "");
 
                         // call function to create playlist
                         // return boolean true if created successfully, else return false
-                        boolean createdPlaylist = new JDBC_connection().createPlaylist(conn,email,playlistName);
+                        playlist newPlaylist = new playlist(email, playlistName);
+                        boolean createdPlaylist = new JDBC_connection().createPlaylist(conn, newPlaylist);
                         if (createdPlaylist == true) {
                             System.out.println("Created playlist successfully!");
                         }
@@ -131,13 +130,20 @@ public class main {
                         if (isVerifiedArtist == true) {
                             System.out.println("Enter the name of the song that you want to add : ");
                             String songName = sc.next();
-                            String songID = UUID.randomUUID().toString().replace("-", "");
-                            int plays = 0;
-                            int rating = 0;
+                            System.out.println("Which album does this song belong to?");
+                            String fromAlbum = sc.next();
+                            song newSong = new song(email, songName, fromAlbum);
+                            boolean createdSong = new JDBC_connection().insertSong(conn, newSong);
+                            // String songID = UUID.randomUUID().toString().replace("-", "");
 
+                            if (!createdSong) {
+                                System.out.println("Song failed to be added!");
+                            }
+                            else {
+                                System.out.println("Song added successfully!");
+                            }
                             // call a function to create the song and add it to the database
                             // return a boolean true or false (for success and failure)
-                            boolean isSongCreated = true;
                         }
                         else {
                             System.out.println("You are not a verified artist!");
@@ -147,12 +153,27 @@ public class main {
                     else if (choice == 3) {
                         System.out.println("Enter the name of the album you want to create : ");
                         String albumName = sc.next();
-                        String albumID = UUID.randomUUID().toString().replace("-", "");
-                        int plays = 0;
-                        int rating = 0;
+                        String albumID = email;
+                        int num;
+                        System.out.println("Enter the number of songs you want to enter into you album : ");
+                        num = sc.nextInt();
+                        String[] songs = new String[num];
+                        System.out.println("Enter the songs : ");
+                        for (int i=0; i<num; i++) {
+                            var song = sc.nextLine();
+                            songs[i] = song;
+                        }
+                        album newAlbum = new album(albumID, albumName, songs);
+                        boolean isAlbumCreated = new JDBC_connection().insertAlbum(conn, newAlbum);
+
+                        if (!isAlbumCreated) {
+                            System.out.println("Failed to create album!!");
+                        }
+                        else {
+                            System.out.println("Created album successfully!");
+                        }
 
                         // call a function to create album, and return boolean
-                        boolean isAlbumCreated = true;
                     }
 
                     else {

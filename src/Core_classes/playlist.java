@@ -10,6 +10,35 @@ public class playlist {
     private String[] songs;
     public static int countInstance=0;
 
+    public String getUseremail() {
+        return useremail;
+    }
+
+    public void setUseremail(String useremail) {
+        this.useremail = useremail;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String[] getSongs() {
+        return songs;
+    }
+
+    public void setSongs(String[] songs) {
+        this.songs = songs;
+    }
+
+    public playlist(String userEmail, String playlistName) {
+        this.useremail = userEmail;
+        this.name = playlistName;
+    }
+
     public  static void displayPlaylists(ResultSet res){
         try{
             do{

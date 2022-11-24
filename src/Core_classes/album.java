@@ -11,6 +11,52 @@ public class album {
     private int plays;
     private String rating;
 
+    public String getAlbumid() {
+        return albumid;
+    }
+
+    public void setAlbumid(String albumid) {
+        this.albumid = albumid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String[] getSongs() {
+        return songs;
+    }
+
+    public void setSongs(String[] songs) {
+        this.songs = songs;
+    }
+
+    public int getPlays() {
+        return plays;
+    }
+
+    public void setPlays(int plays) {
+        this.plays = plays;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public album(String albumid, String name, String[] songs) {
+        this.albumid = albumid;
+        this.name = name;
+        this.songs = songs;
+    }
+
     public  static void displayAlbums(ResultSet res){
         try{
             do{
