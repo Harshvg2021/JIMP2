@@ -1,5 +1,7 @@
 package DB;
 import Core_classes.*;
+
+import javax.security.auth.kerberos.EncryptionKey;
 import java.sql.*;
 
 public class JDBC_connection {
@@ -93,17 +95,21 @@ public class JDBC_connection {
     public boolean insertIntoPlaylist(Connection conn, String email,String playlistname,String[] songs){   //append ....
         try{
             Statement st1 = conn.createStatement();
-            ResultSet res  = st1.executeQuery("select name from playlists;");
+            String query = String.format("select name from playlists  where useremail = '%s';",email)
+            ResultSet res  = st1.executeQuery(query);
             boolean hasEntry=true;
+            Array arrInit;
             while (res.next()){
                 if(playlistname.equals(res.getString("name"))){
                     hasEntry = true;// entry uis there
+                    arrInit = res.getArray("songs");
                     break;
                 }
             }
             if(!hasEntry){
                 return false;
             }
+
             Array arr = conn.createArrayOf("VARCHAR",songs);
             PreparedStatement st = conn.prepareStatement("update playlists set songs=? where name=?;");
             st.setArray(1,arr);
@@ -277,4 +283,101 @@ public class JDBC_connection {
             return false;
         }
     }
+    public boolean deleteUser(Connection conn,String password,String email){
+        try{
+            PreparedStatement pt ;
+            String Query = "select password from users where userid= ?";
+            pt = conn.prepareStatement(Query);
+            pt.setString(1,email);
+            ResultSet res  = pt.executeQuery();
+            String encyptedpass  = user.getEncryptedPassword(password);
+            while(res.next()){
+                if(!encyptedpass.equals(res.getString("password"))){
+                    return false;
+                }
+            }
+            String delQuery = "delete from users where userid = ?";
+            PreparedStatement pt1 ;
+            pt1 = conn.prepareStatement(delQuery);
+            pt1.setString(1,email);
+            pt1.executeUpdate();
+            return true;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean isVerifiedArtist(Connection conn,String email){
+        try{
+            PreparedStatement pt ;
+            String Query = "select * from users where userid= ?";
+            pt = conn.prepareStatement(Query);
+            pt.setString(1,email);
+            ResultSet res  = pt.executeQuery();
+            while(res.next()){
+                if(res.getInt("verifiedArtist") == 0){
+                    return false;
+                }
+            }
+            return true;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteSong(Connection conn,String email,String songname){
+        try{
+            if(isVerifiedArtist(conn,email)){
+                return false;
+            }
+            String delQuery = "delete from songs where userid = ? and name = ?";
+            PreparedStatement pt1 ;
+            pt1 = conn.prepareStatement(delQuery);
+            pt1.setString(1,email);
+            pt1.setString(2,songname);
+            pt1.executeUpdate();
+            return true;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean deleteAlbum(Connection conn,String email,String albumName){
+        try{
+            if(isVerifiedArtist(conn,email)){
+                return false;
+            }
+            String delQuery = "delete from album where useremail = ? and name = ?";
+            PreparedStatement pt1 ;
+            pt1 = conn.prepareStatement(delQuery);
+            pt1.setString(1,email);
+            pt1.setString(2,albumName);
+            pt1.executeUpdate();
+            return true;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean deletePlaylist(Connection conn,String email,String playlistName){
+        try{
+            String delQuery = "delete from playlists where useremail = ? and name = ?";
+            PreparedStatement pt1 ;
+            pt1 = conn.prepareStatement(delQuery);
+            pt1.setString(1,email);
+            pt1.setString(2,playlistName);
+            pt1.executeUpdate();
+            return true;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
