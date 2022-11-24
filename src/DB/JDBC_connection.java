@@ -3,6 +3,7 @@ import Core_classes.*;
 
 import javax.security.auth.kerberos.EncryptionKey;
 import java.sql.*;
+import java.util.Random;
 
 public class JDBC_connection {
     public Connection connect_to_db(String dbname, String user, String pass) {
@@ -22,9 +23,12 @@ public class JDBC_connection {
         }
         return conn;
     }
-    public boolean createUser(Connection conn,String email,String username,String password){
+    public boolean createUser(Connection conn,user newUser){
         try {
             user.countUsers++;
+            String email = newUser.getUserEmail();
+            String password = newUser.getPassword();
+            String username = newUser.getName();
 
             //first check if existing email
             Statement st = conn.createStatement();
@@ -72,8 +76,10 @@ public class JDBC_connection {
             return  false;
         }
     }
-    public boolean createPlaylist(Connection conn, String email,String name){
+    public boolean createPlaylist(Connection conn, playlist newPlaylist){
         try{
+            String name = newPlaylist.getName();
+            String email = newPlaylist.getUseremail();
             Statement st1 = conn.createStatement();
             ResultSet res  = st1.executeQuery("select * from playlists;");
             while (res.next()){
@@ -122,22 +128,32 @@ public class JDBC_connection {
             return  false;
         }
     }
-    public boolean insertSong(Connection conn,String songid,String name,String fromAlbum,int plays,int rating){ //plays and rating randomly gene
+    public boolean insertSong(Connection conn, song newSong){ //plays and rating randomly gene
         try{
-
+            Random rd = new Random();
+            String songid = newSong.getSongid();
+            String name = newSong.getName();
+            String fromAlbum = newSong.getFromAlbum();
+            int plays = rd.nextInt((9999999-0)+1);
+            int rating = rd.nextInt((10-0)+1)+0;
             Statement st = conn.createStatement();
             String query = String.format("Insert into songs values('%s','%s','%s',%d,%d);",songid,name,fromAlbum,plays,rating);
             st.executeUpdate(query);
-            System.out.println("succcesfully songs");
             return true;
         }
         catch (Exception e){
             e.printStackTrace();
-            return  false;
+            return false;
         }
     }
-    public boolean insertAlbum(Connection conn,String albumid,String name,String[] songs,int plays,int rating){ //plays and rating randomly gene
+    public boolean insertAlbum(Connection conn, album newAlbum){ //plays and rating randomly gene
         try{
+            Random rd = new Random();
+            String albumid = newAlbum.getAlbumid();
+            String[] songs = newAlbum.getSongs();
+            String name = newAlbum.getName();
+            int plays = rd.nextInt((9999999-0)+1);
+            int rating = rd.nextInt((10-0)+1)+0;
             Array arr = conn.createArrayOf("VARCHAR",songs);
             PreparedStatement pt ;
             pt= conn.prepareStatement("Insert into album values (?,?,?,?,?);");

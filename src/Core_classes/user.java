@@ -9,6 +9,30 @@ public class user {
     private boolean isVerifiedArtist;
     public static int countUsers = 0;
 
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public user(String userEmail, String name, String password) {
         this.userEmail = userEmail;
         this.name = name;
