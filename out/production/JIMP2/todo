@@ -1,2 +1,8 @@
 create instance of class before inserting into database
 update playlist function
+create playlist -> scam line issue (empty string)
+exception handlng for null in playlist.songs
+         (java.lang.NullPointerException: Cannot invoke "java.sql.Array.getArray()" because "arr" is null
+            at Core_classes.playlist.displayPlaylists(playlist.java:47)
+            at DB.JDBC_connection.searchPlaylist(JDBC_connection.java:294)
+            at Core_classes.main.main(main.java:233)

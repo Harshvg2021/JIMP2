@@ -81,7 +81,8 @@ public class JDBC_connection {
             String name = newPlaylist.getName();
             String email = newPlaylist.getUseremail();
             Statement st1 = conn.createStatement();
-            ResultSet res  = st1.executeQuery("select * from playlists;");
+            String Query  = String.format("select * from playlists where useremail = '%s';", email);
+            ResultSet res  = st1.executeQuery(Query);
             while (res.next()){
                 if(name.equals(res.getString("name"))){
                     return false;// pplaylist already exist
@@ -101,12 +102,12 @@ public class JDBC_connection {
     public boolean insertIntoPlaylist(Connection conn, String email,String playlistname,String[] songs){   //append ....
         try{
             Statement st1 = conn.createStatement();
-            String query = String.format("select name from playlists  where useremail = '%s';",email);
+            String query = String.format("select * from playlists  where useremail = '%s';",email);
             ResultSet res  = st1.executeQuery(query);
             boolean hasEntry=true;
             Array arrInit;
             while (res.next()){
-                if(playlistname.equals(res.getString("name"))){
+                if(playlistname.equals(res.getString("name")) && email.equals(res.getString("useremail"))){
                     hasEntry = true;// entry uis there
                     arrInit = res.getArray("songs");
                     break;
@@ -117,9 +118,10 @@ public class JDBC_connection {
             }
 
             Array arr = conn.createArrayOf("VARCHAR",songs);
-            PreparedStatement st = conn.prepareStatement("update playlists set songs=? where name=?;");
+            PreparedStatement st = conn.prepareStatement("update playlists set songs=? where name=? and useremail = ?;");
             st.setArray(1,arr);
             st.setString(2,playlistname);
+            st.setString(3,email);
             st.executeUpdate();
             return true;
         }
@@ -188,7 +190,8 @@ public class JDBC_connection {
     public boolean updatePassword(Connection conn,String newpassword,String useremail){
         try{
             Statement s = conn.createStatement();
-            String query = String.format("update users set password='%s' where userid='%s';",newpassword,useremail);
+            String encryptedNewPass = user.getEncryptedPassword(newpassword);
+            String query = String.format("update users set password='%s' where userid='%s';",encryptedNewPass,useremail);
             s.executeUpdate(query);
             return true;
         }
@@ -312,11 +315,35 @@ public class JDBC_connection {
                     return false;
                 }
             }
+
+            String searchQuery = "select * from playlists where useremail = ?";
+            PreparedStatement pt3;
+            pt3 = conn.prepareStatement(searchQuery);
+            pt3.setString(1, email);
+            ResultSet res1 = pt3.executeQuery();
+            boolean hasEntry =false;
+            while(res1.next()){
+                if(res1.getString("useremail").equals(email)){
+                    hasEntry = true;
+                    break;
+                }
+            }
+            if(!hasEntry){
+                return  false;
+            }
+
+            String delPlaylist = "delete from playlists where useremail = ?";
+            PreparedStatement pt2;
+            pt2 = conn.prepareStatement(delPlaylist);
+            pt2.setString(1, email);
+
             String delQuery = "delete from users where userid = ?";
             PreparedStatement pt1 ;
             pt1 = conn.prepareStatement(delQuery);
             pt1.setString(1,email);
+
             pt1.executeUpdate();
+            pt2.executeUpdate();
             return true;
         }
         catch (Exception e){
@@ -347,9 +374,10 @@ public class JDBC_connection {
     public boolean deleteSong(Connection conn,String email,String songname){
         try{
             if(!isVerifiedArtist(conn,email)){
+                System.out.println("not verify");
                 return false;
             }
-            String delQuery = "delete from songs where userid = ? and name = ?";
+            String delQuery = "delete from songs where songid = ? and name = ?";
             PreparedStatement pt1 ;
             pt1 = conn.prepareStatement(delQuery);
             pt1.setString(1,email);
@@ -364,7 +392,7 @@ public class JDBC_connection {
     }
     public boolean deleteAlbum(Connection conn,String email,String albumName){
         try{
-            if(isVerifiedArtist(conn,email)){
+            if(!isVerifiedArtist(conn,email)){
                 return false;
             }
             String delQuery = "delete from album where useremail = ? and name = ?";
@@ -382,6 +410,23 @@ public class JDBC_connection {
     }
     public boolean deletePlaylist(Connection conn,String email,String playlistName){
         try{
+            String searchQuery = "select * from playlists where useremail = ? and name = ?";
+            PreparedStatement pt2;
+            pt2 = conn.prepareStatement(searchQuery);
+            pt2.setString(1, email);
+            pt2.setString(2, playlistName);
+            ResultSet res = pt2.executeQuery();
+            boolean hasEntry =false;
+            while(res.next()){
+                if(res.getString("name").equals(playlistName)){
+                    hasEntry = true;
+                    break;
+                }
+            }
+            if(!hasEntry){
+                return  false;
+            }
+
             String delQuery = "delete from playlists where useremail = ? and name = ?";
             PreparedStatement pt1 ;
             pt1 = conn.prepareStatement(delQuery);
@@ -398,7 +443,7 @@ public class JDBC_connection {
     public void makeArtistVerified(Connection conn,String email){
         try{
             PreparedStatement pt ;
-            String Query = "update users where email = ? set verifiedArtist = 1";
+            String Query = "update users set verifiedartist = 1 where userid = ?;";
             pt = conn.prepareStatement(Query);
             pt.setString(1,email);
             pt.executeUpdate();

@@ -51,10 +51,10 @@ public class user {
                 System.out.println("********************************");
                 System.out.println("Users Name: " + name);
                 if(verifiesArtist==1){
-                    System.out.println("Verified Artist : YES)");
+                    System.out.println("Verified Artist : YES");
                 }
                 else
-                    System.out.println("Verified Artist : NO)");
+                    System.out.println("Verified Artist : NO");
                 System.out.println("********************************");
             }while (res.next());
         }

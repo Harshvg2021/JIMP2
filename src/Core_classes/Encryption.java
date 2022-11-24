@@ -6,7 +6,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 // Java program to calculate SHA hash value
-
+/// abcdef
+// then digest the string -> break the stirng into small bytes ad hash them
+// to EHxstring is to
 class Encryption {
     public static byte[] getSHA(String input) throws NoSuchAlgorithmException
     {
