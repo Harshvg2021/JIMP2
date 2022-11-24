@@ -39,6 +39,7 @@ public class main {
                     if (login) {
                         email = curemail;
                         System.out.println("Login succesful");
+                        isVerifiedArtist = new JDBC_connection().isVerifiedArtist(conn,email);
                     }
                     // isVerifiedArtist = true/false (retrieve this from the database)
                     // else if you return false, I will say "Login failed!!"
@@ -229,6 +230,10 @@ public class main {
 
                     else if (choice == 4) {
                         // show all the playlist of the current user (display the name, playlist ID, songs in each playlist)
+                        boolean allPlaylist = new JDBC_connection().searchPlaylist(conn,email);
+                        if(!allPlaylist){
+                            System.out.println("User has no playlist..!");
+                        }
 
                     }
 
@@ -343,7 +348,7 @@ public class main {
 
                         // call a function to get the current user's password and check if it is the same
                         // return a boolean
-                        boolean isPasswordCorrect = true;
+                        boolean isPasswordCorrect = new JDBC_connection().deleteUser(conn,currentPassword,email);
                         if (isPasswordCorrect == false) {
                             System.out.println("The password you entered is incorrect!");
                         }
@@ -363,9 +368,9 @@ public class main {
                         System.out.println("Enter the name of the song that you want to delete : ");
                         String songName = sc.next();
 
-                        // call a function to check if the user has any song with the given name
-                        // return a boolean
-                        boolean doesArtistHaveSong = true;
+//                         call a function to check if the user has any song with the given name
+//                         return a boolean
+                        boolean doesArtistHaveSong = new JDBC_connection().searchSong(conn,songName);
                         if (doesArtistHaveSong == false) {
                             System.out.println("User does not have any such song!!");
                             continue;
@@ -373,7 +378,7 @@ public class main {
 
                         // call a function to delete the song
                         // return a boolean to indicate if the operation was completed successfully
-                        boolean isSongDeleted = true;
+                        boolean isSongDeleted = new JDBC_connection().deleteSong(conn,email,songName);
                         if (isSongDeleted == false) {
                             System.out.println("Song was not able to be deleted!");
                         }
@@ -389,7 +394,7 @@ public class main {
                         String albumName = sc.next();
 
                         // call a function to check if the artist has an album with the entered name
-                        boolean doesArtistHaveAlbum = true;
+                        boolean doesArtistHaveAlbum = new JDBC_connection().searchAlbum(conn,albumName);
                         if (doesArtistHaveAlbum == false) {
                             System.out.println("Artist does not have any such album with the given name!");
                             continue;
@@ -409,14 +414,14 @@ public class main {
 
                         // call a function to check if the user has a playlist with the given name
                         // return a boolean
-                        boolean doesUserHavePlaylist = true;
+                        boolean doesUserHavePlaylist = new JDBC_connection().searchPlaylist(conn,email);
                         if (doesUserHavePlaylist == false) {
                             System.out.println("User has no playlist with given name!");
                         }
 
                         // call a function to delete the playlist
                         // return a boolean to indicate if the operation was successfully completed
-                        boolean isPlaylistDeleted = true;
+                        boolean isPlaylistDeleted = new JDBC_connection().deletePlaylist(conn,email,playlistName);
                         if (isPlaylistDeleted == false) {
                             System.out.println("Playlist could not be deleted!");
                         }
@@ -425,12 +430,16 @@ public class main {
 
                 else if (choice == 5) {
                     // check if user is already a verified artist
-
+                    boolean isAlreadyVerified = new JDBC_connection().isVerifiedArtist(conn,email);
+                    if(isAlreadyVerified){
+                        System.out.println("Already a verified artist..");
+                    }
                     // else :
                     // call a function that makes the current user verified as an artist
                     // take the current user's userID, and create an artist with the same ID and the same name
                     System.out.println("You are now a verified artist!!");
                     isVerifiedArtist = true;
+
                 }
 
                 else if (choice == 6) {

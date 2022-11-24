@@ -101,7 +101,7 @@ public class JDBC_connection {
     public boolean insertIntoPlaylist(Connection conn, String email,String playlistname,String[] songs){   //append ....
         try{
             Statement st1 = conn.createStatement();
-            String query = String.format("select name from playlists  where useremail = '%s';",email)
+            String query = String.format("select name from playlists  where useremail = '%s';",email);
             ResultSet res  = st1.executeQuery(query);
             boolean hasEntry=true;
             Array arrInit;
@@ -346,7 +346,7 @@ public class JDBC_connection {
 
     public boolean deleteSong(Connection conn,String email,String songname){
         try{
-            if(isVerifiedArtist(conn,email)){
+            if(!isVerifiedArtist(conn,email)){
                 return false;
             }
             String delQuery = "delete from songs where userid = ? and name = ?";
@@ -393,6 +393,19 @@ public class JDBC_connection {
         catch (Exception e){
             e.printStackTrace();
             return false;
+        }
+    }
+    public void makeArtistVerified(Connection conn,String email){
+        try{
+            PreparedStatement pt ;
+            String Query = "update users where email = ? set verifiedArtist = 1";
+            pt = conn.prepareStatement(Query);
+            pt.setString(1,email);
+            pt.executeUpdate();
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 
