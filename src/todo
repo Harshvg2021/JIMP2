@@ -6,3 +6,20 @@ exception handlng for null in playlist.songs
             at Core_classes.playlist.displayPlaylists(playlist.java:47)
             at DB.JDBC_connection.searchPlaylist(JDBC_connection.java:294)
             at Core_classes.main.main(main.java:233)
+
+diaply all albums of a  artst
+
+sorted display of songs by plays
+sorted display of songs by rating
+dis[lay top 10 artist
+display songs  by name sorted
+
+as the project manager here are the few task that ryuk and vaibhav have to do
+1) add oop pillars to the classes
+2) paging on functions like displaysongs , search songs etc
+3) get related data from api and covert in form  of csv(to know what data to fetch check the classes)
+4) if possible try to provide sopitify links to play the songs (optional)
+5)
+the new codebase is very easy to understand , so make sure that any change u make , we are still able to run the core_classes/main.java file
+new project link: https://github.com/Harshvg2021/JIMP2/
+
