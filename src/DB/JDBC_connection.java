@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
 import java.util.Random;
+import java.util.concurrent.Phaser;
 
 public class JDBC_connection {
     public Connection connect_to_db(String dbname, String user, String pass) {
@@ -470,19 +471,23 @@ public class JDBC_connection {
             e.printStackTrace();
         }
     }
-    public void checkIfUserExists(Connection conn,){
+    public boolean checkIfUserExists(Connection conn,String useremail){
         try{
-            Statement pt ;
-            String Query = "select * from album order by rating;";
-            pt = conn.createStatement();
+            PreparedStatement pt ;
+            String Query = "select * from users where userid= ?";
+            pt = conn.prepareStatement(Query);
+            pt.setString(1,useremail);
             ResultSet res  = pt.executeQuery(Query);
+            boolean hasEntry = false;
             while (res.next()){
-                album.displayAlbums(res);
+                hasEntry= true;
             }
+            return  hasEntry;
 //            album.displayAlbums(res);
         }
         catch (Exception e){
             e.printStackTrace();
+            return false;
         }
     }
     public void inserUserWithCsv(Connection conn,String fileName){
@@ -494,7 +499,9 @@ public class JDBC_connection {
             while((lineText = linereader.readLine())!=null){
                 String[] data = lineText.split(",");
                 String email = data[0];
-                //
+                if(checkIfUserExists(conn,email)){
+                    continue;
+                }
                 String name = data[1];
                 String password = data[2];
                 String q = "Insert into users values(?,?,?,?);";
