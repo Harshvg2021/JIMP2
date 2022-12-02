@@ -7,12 +7,7 @@ exception handlng for null in playlist.songs
             at DB.JDBC_connection.searchPlaylist(JDBC_connection.java:294)
             at Core_classes.main.main(main.java:233)
 
-diaply all albums of a  artst
 
-sorted display of songs by plays
-sorted display of songs by rating
-dis[lay top 10 artist
-display songs  by name sorted
 
 as the project manager here are the few task that ryuk and vaibhav have to do
 1) add oop pillars to the classes

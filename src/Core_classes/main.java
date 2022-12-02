@@ -20,6 +20,7 @@ public class main {
                 System.out.println("1. Login to your account.");
                 System.out.println("2. Create a new account.");
                 System.out.println("3. Exit");
+                System.out.println("4. Insert Data Using CSV.");
 
                 System.out.println("\nEnter your choice : ");
                 choice = sc.nextInt();
@@ -86,6 +87,28 @@ public class main {
                     break;
                 }
 
+                else if (choice == 4) {
+                    System.out.println("INSERT USING CSV : ");
+                    System.out.println("1. Insert users data.");
+                    System.out.println("2. Insert songs data");
+
+                    System.out.println("\nEnter your choice : ");
+                    choice = sc.nextInt();
+
+                    if (choice == 1) {
+                        System.out.println("Enter the name of the csv file : ");
+                        String fileName = sc.next();
+                        new JDBC_connection().inserUserWithCsv(conn,fileName);
+                    }
+                    else if (choice == 2) {
+                        System.out.println("Enter the name of the csv file : ");
+                        String fileName = sc.next();
+                        new JDBC_connection().insertSongsWithCsv(conn,fileName);
+                    }
+                    else {
+                        System.out.println("Illegal choice!!");
+                    }
+                }
                 else {
                     System.out.println("Illegal choice!");
                 }
@@ -140,6 +163,7 @@ public class main {
                             // String songID = UUID.randomUUID().toString().replace("-", "");
 
                             if (!createdSong) {
+
                                 System.out.println("Song failed to be added!");
                             }
                             else {
@@ -461,6 +485,44 @@ public class main {
                 }
 
                 else if (choice == 6) {
+                    System.out.println("C - DISPLAY operations : ");
+                    System.out.println("1. Display all songs sorted by rating.");
+                    System.out.println("2. Display all users.");
+                    System.out.println("3. Display all albums sorted by rating.");
+                    System.out.println("4. Display top 10 songs.");
+                    System.out.println("5. Display top 10 albums.");
+
+                    System.out.println("\nEnter your choice : ");
+                    choice = sc.nextInt();
+
+                    if (choice == 1) {
+                        // call a function to display all songs
+                        new JDBC_connection().displaySongs(conn);
+                    }
+                    else if (choice == 2) {
+                        // call a function to display all users
+                        new JDBC_connection().displayUsers(conn);
+
+                    }
+                    else if (choice == 3) {
+                        // call a function to displat all albums
+                        new JDBC_connection().displayAlbum(conn);
+                    }
+                    else if (choice == 4) {
+                        // call a function to display top 10 songs
+                        new JDBC_connection().displayTopTenSongs(conn);
+                    }
+                    else if (choice == 5) {
+                        // call a function to display top 10 albums
+                        new JDBC_connection().displayTopTenAlbums(conn);
+                    }
+                    else {
+                        System.out.println("Illegal choice!");
+                        continue;
+                    }
+                }
+
+                else if (choice == 7) {
                     break;
                 }
 

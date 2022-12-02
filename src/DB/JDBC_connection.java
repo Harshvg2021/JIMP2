@@ -1,7 +1,9 @@
 package DB;
 import Core_classes.*;
 
-import javax.security.auth.kerberos.EncryptionKey;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Random;
 
@@ -453,5 +455,190 @@ public class JDBC_connection {
             e.printStackTrace();
         }
     }
+    public void displayAblum(Connection conn){
+        try{
+            Statement pt ;
+            String Query = "select * from album order by rating;";
+            pt = conn.createStatement();
+            ResultSet res  = pt.executeQuery(Query);
+            while (res.next()){
+                album.displayAlbums(res);
+            }
+//            album.displayAlbums(res);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void checkIfUserExists(Connection conn,){
+        try{
+            Statement pt ;
+            String Query = "select * from album order by rating;";
+            pt = conn.createStatement();
+            ResultSet res  = pt.executeQuery(Query);
+            while (res.next()){
+                album.displayAlbums(res);
+            }
+//            album.displayAlbums(res);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void inserUserWithCsv(Connection conn,String fileName){
+        try{
+            String Path = "/home/harsh/Documents/JIMP2/src/Core_classes/csvFiles/" + fileName;
+            BufferedReader linereader =  new BufferedReader(new FileReader(Path));
+            String lineText = null;
+            int count =0 ;
+            while((lineText = linereader.readLine())!=null){
+                String[] data = lineText.split(",");
+                String email = data[0];
+                //
+                String name = data[1];
+                String password = data[2];
+                String q = "Insert into users values(?,?,?,?);";
+                PreparedStatement pt = conn.prepareStatement(q);
+                pt.setString(1,email);
+                pt.setString(2,name);
+                String Encrypt=  user.getEncryptedPassword(password);
+                pt.setString(3,Encrypt);
+                pt.setInt(4,0);
+                pt.executeUpdate();
+            }
+            System.out.println("inserted csv");
+            linereader.close();
+            conn.close();
+//            album.displayAlbums(res);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void insertSongsWithCsv(Connection conn,String fileName){
+        try{
+            String Path = "/home/harsh/Documents/JIMP2/src/Core_classes/csvFiles/" + fileName;
+            BufferedReader linereader =  new BufferedReader(new FileReader(Path));
+            String lineText = null;
+            int count =0 ;
+            while((lineText = linereader.readLine())!=null){
+                String[] data = lineText.split(",");
+                String songID = data[0];
+                String name = data[1];
+                String fromAlbum = data[4];
+                int plays = Integer.parseInt(data[2].trim());
+                int rating = Integer.parseInt(data[3].trim());
+                String link = data[5];
+                String q = "Insert into songs values(?,?,?,?,?,?);";
+                PreparedStatement pt = conn.prepareStatement(q);
+                pt.setString(1,songID);
+                pt.setString(2,name);
+                pt.setString(3,fromAlbum);
+                pt.setInt(4,plays);
+                pt.setInt(5,rating);
+                pt.setString(6,link);
+                pt.executeUpdate();
+            }
+            System.out.println("inserted csv");
+            linereader.close();
+            conn.close();
+//            album.displayAlbums(res);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    public void displayAlbum(Connection conn){
+        try{
+            Statement pt ;
+            String Query = "select * from album order by rating;";
+            pt = conn.createStatement();
+            ResultSet res  = pt.executeQuery(Query);
+            while (res.next()){
+                album.displayAlbums(res);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void displaySongs(Connection conn){
+        try{
+            Statement pt ;
+            String Query = "select * from song order by rating;";
+            pt = conn.createStatement();
+            ResultSet res  = pt.executeQuery(Query);
+            while (res.next()){
+                song.displaySongs(res);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+//    public void displayArtists(Connection conn){
+//        try{
+//            Statement pt ;
+//            String Query = "select * from artist order by rating;";
+//            pt = conn.createStatement();
+//            ResultSet res  = pt.executeQuery(Query);
+//            while (res.next()){
+//                artist.displayArtists(res);
+//            }
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
+    public void displayUsers(Connection conn){
+        try{
+            Statement pt ;
+            String Query = "select * from user;";
+            pt = conn.createStatement();
+            ResultSet res  = pt.executeQuery(Query);
+            while (res.next()){
+                user.displayUser(res);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void displayTopTenSongs(Connection conn){
+        try{
+            Statement pt ;
+            String Query = "select * from song group by rating LIMIT 10;";
+            pt = conn.createStatement();
+            ResultSet res  = pt.executeQuery(Query);
+            while (res.next()){
+                song.displaySongs(res);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void displayTopTenAlbums(Connection conn){
+        try{
+            Statement pt ;
+            String Query = "select * from album group by rating LIMIT 10;";
+            pt = conn.createStatement();
+            ResultSet res  = pt.executeQuery(Query);
+            while (res.next()){
+                album.displayAlbums(res);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 }
